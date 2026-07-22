@@ -1,0 +1,9 @@
+- Attendence
+- Timetable
+- Notes
+- Tasks
+- Projects
+- Ideas
+- Resume
+- AI
+- College Wrapped
