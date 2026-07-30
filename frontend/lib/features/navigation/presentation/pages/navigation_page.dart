@@ -38,8 +38,8 @@ class _NavigationPageState extends State<NavigationPage> {
             label: "Home",
           ),
           NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
+            icon: Icon(Icons.library_books_outlined),
+            selectedIcon: Icon(Icons.library_books),
             label: "Subjects",
           ),
           NavigationDestination(
