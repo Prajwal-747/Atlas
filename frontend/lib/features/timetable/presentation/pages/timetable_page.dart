@@ -6,7 +6,9 @@ import 'package:frontend/features/timetable/presentation/widgets/session_tile.da
 import 'package:frontend/core/widgets/section_title.dart';
 
 class TimetablePage extends StatefulWidget {
-  const TimetablePage({super.key});
+  final String? subjectId;
+  final String? subjectName;
+  const TimetablePage({super.key, this.subjectId, this.subjectName});
 
   @override
   State<TimetablePage> createState() => _TimetablePageState();
@@ -50,7 +52,9 @@ class _TimetablePageState extends State<TimetablePage> {
   @override
   Widget build(BuildContext context) {
     return AppPageScaffold(
-      title: 'Timetable',
+      title: widget.subjectName == null
+          ? 'Timetable'
+          : '${widget.subjectName} Schedule',
       child: FutureBuilder<List<ClassSession>>(
         future: sessions,
         builder: (context, snapshot) {
@@ -64,7 +68,12 @@ class _TimetablePageState extends State<TimetablePage> {
             return const Center(child: Text("No sessions found"));
           }
           final sessionList = snapshot.data!;
-          final groupedSessions = groupSessionsByDay(sessionList);
+          final filteredSessions = widget.subjectId == null
+              ? sessionList
+              : sessionList
+                    .where((session) => session.subjectId == widget.subjectId)
+                    .toList();
+          final groupedSessions = groupSessionsByDay(filteredSessions);
           final orderedDays = groupedSessions.entries.toList()
             ..sort(
               (a, b) =>

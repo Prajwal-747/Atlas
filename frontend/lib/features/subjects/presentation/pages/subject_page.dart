@@ -37,7 +37,17 @@ class SubjectPage extends StatelessWidget {
                   title: 'Timetable',
                   subtitle: 'View today\'s classes',
                   trailing: '3 Classes',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TimetablePage(
+                          subjectId: subject.id,
+                          subjectName: subject.name,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SubjectActionTile(
                   icon: Icons.assignment,
