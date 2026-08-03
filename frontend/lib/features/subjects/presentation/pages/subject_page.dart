@@ -3,6 +3,7 @@ import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_action_tile.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_action_list.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_header.dart';
+import 'package:frontend/features/timetable/presentation/pages/timetable_page.dart';
 
 class SubjectPage extends StatelessWidget {
   final Subject subject;

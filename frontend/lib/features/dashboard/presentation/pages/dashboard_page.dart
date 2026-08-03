@@ -4,6 +4,7 @@ import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/dashboard_header.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/todays_classes_card.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/attendance_summary_card.dart';
+import 'package:frontend/features/timetable/presentation/pages/timetable_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -17,7 +18,14 @@ class DashboardPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           const AttendanceSummaryCard(),
           const SizedBox(height: AppSpacing.lg),
-          const TodaysClassesCard(),
+          TodaysClassesCard(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TimetablePage()),
+              );
+            },
+          ),
         ],
       ),
     );
