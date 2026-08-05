@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/attendance/presentation/pages/attendance_page.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_action_tile.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_action_list.dart';
@@ -30,7 +31,17 @@ class SubjectPage extends StatelessWidget {
                   title: 'Attendance',
                   subtitle: 'Track Attendance',
                   trailing: '87%',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AttendancePage(
+                          subjectId: subject.id,
+                          subjectName: subject.name,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SubjectActionTile(
                   icon: Icons.schedule,
