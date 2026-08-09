@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/domain/entities/subject_type.dart';
 
@@ -6,6 +7,7 @@ final mockSubjects = [
     id: "1",
     name: 'Signals and Systems',
     code: 'EC301',
+    color: Colors.blue,
     semester: 3,
     credits: 4,
     type: SubjectType.theory,
@@ -19,6 +21,7 @@ final mockSubjects = [
     id: '2',
     name: 'Digital Electronics',
     code: 'EC302',
+    color: Colors.green,
     semester: 3,
     credits: 4,
     type: SubjectType.theory,

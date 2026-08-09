@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/features/subjects/domain/entities/subject_type.dart';
 
 class Subject {
   final String id;
   final String name;
+  final Color color;
   final String code;
   final int semester;
   final int credits;
@@ -16,6 +18,7 @@ class Subject {
   const Subject({
     required this.id,
     required this.name,
+    required this.color,
     required this.code,
     required this.semester,
     required this.credits,

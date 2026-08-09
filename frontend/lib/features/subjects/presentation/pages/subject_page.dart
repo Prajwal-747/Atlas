@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/assignments/presentation/pages/assignment_page.dart';
 import 'package:frontend/features/attendance/presentation/pages/attendance_page.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_action_tile.dart';
@@ -65,7 +66,17 @@ class SubjectPage extends StatelessWidget {
                   title: 'Assignments',
                   subtitle: 'Manage coursework',
                   trailing: '2 Due',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AssignmentPage(
+                          subjectId: subject.id,
+                          subjectName: subject.name,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SubjectActionTile(
                   icon: Icons.note_alt,
