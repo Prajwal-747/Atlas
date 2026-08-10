@@ -4,6 +4,7 @@ import 'package:frontend/core/widgets/section_title.dart';
 import 'package:frontend/features/assignments/data/repositories/mock_assignment_repository.dart';
 import 'package:frontend/features/assignments/domain/entities/assignment.dart';
 import 'package:frontend/features/assignments/domain/enums/assignment_status.dart';
+import 'package:frontend/features/assignments/presentation/pages/assignment_details_page.dart';
 import 'package:frontend/features/assignments/presentation/widgets/assignment_card.dart';
 import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
@@ -96,6 +97,16 @@ class _AssignmentPageState extends State<AssignmentPage> {
                   (assignment) => AssignmentCard(
                     assignment: assignment,
                     showSubject: false,
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              AssignmentDetailsPage(assignment: assignment),
+                        ),
+                      );
+                      await _reloadAssignments();
+                    },
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -108,6 +119,16 @@ class _AssignmentPageState extends State<AssignmentPage> {
                   (assignment) => AssignmentCard(
                     assignment: assignment,
                     showSubject: false,
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              AssignmentDetailsPage(assignment: assignment),
+                        ),
+                      );
+                      await _reloadAssignments();
+                    },
                   ),
                 ),
               ],
