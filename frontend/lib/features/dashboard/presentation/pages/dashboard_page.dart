@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_scaffold.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/features/attendance/presentation/pages/attendance_overview_page.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/dashboard_header.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/todays_classes_card.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/attendance_summary_card.dart';
@@ -16,7 +17,16 @@ class DashboardPage extends StatelessWidget {
         children: [
           const DashboardHeader(),
           const SizedBox(height: AppSpacing.lg),
-          const AttendanceSummaryCard(),
+          AttendanceSummaryCard(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AttendanceOverviewPage(),
+                ),
+              );
+            },
+          ),
           const SizedBox(height: AppSpacing.lg),
           TodaysClassesCard(
             onTap: () {
