@@ -65,4 +65,8 @@ class MockAttendanceRepository implements AttendanceRepository {
       );
     }
   }
+
+  Future<List<AttendanceRecord>> getAllAttendance() async {
+    return mockAttendanceRecords;
+  }
 }
