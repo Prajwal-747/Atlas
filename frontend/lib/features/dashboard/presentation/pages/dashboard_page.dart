@@ -9,6 +9,10 @@ import 'package:frontend/features/dashboard/presentation/widgets/dashboard_heade
 import 'package:frontend/features/dashboard/presentation/widgets/todays_classes_card.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/attendance_summary_card.dart';
 import 'package:frontend/features/timetable/presentation/pages/timetable_page.dart';
+import 'package:frontemd/features/assigments/data/repositores/mock_assignment_repositories.dart';
+import 'package:frontend/dashboard/presentation/widgts/assignments_due_soon_card.dart';
+import 'package:frontend/features/assignments/domain/entities/assignment.dart';
+import 'package:frontend/features/assignments/presentation/pages/assignment_details_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -21,18 +25,29 @@ class _DashboardPageState extends State<DashboardPage> {
   final MockAttendanceRepository attendanceRepository =
       MockAttendanceRepository();
   late Future<List<AttendanceRecord>> attendanceRecords;
+  final MockAssignmentRepository assignmentRepository = MockAssignmentRepository();
+  late Future<List<Assignment>> assignments;
 
   @override
   void initState() {
     super.initState();
     attendanceRecords = attendanceRepository.getAllAttendance();
+    assignments = _loadAssignments();
+  }
+
+  Future<List<Assignment>> _loadAssignments() {
+    return assignmentRepository.getAllAssignments();
+  }
   }
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      child: FutureBuilder<List<AttendanceRecord>>(
-        future: attendanceRecords,
+      child: FutureBuilder(
+        future: Future.wait([
+          attendanceRecords,
+          assignments,
+        ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -40,7 +55,9 @@ class _DashboardPageState extends State<DashboardPage> {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
-          final records = snapshot.data ?? [];
+          final attendance = snapshot.data![0] as List<AttendanceRecord>;
+          final assignmentList = snapshot.data![1] as List<Assignment>;
+          final records = attendance;
           final presentCount = records
               .where((record) => record.status == AttendanceStatus.present)
               .length;
@@ -75,6 +92,47 @@ class _DashboardPageState extends State<DashboardPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => const TimetablePage(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AssignmentsDueSoonCard(
+                assignments: assignmentList,
+                onAssignmentTap: (assigment) async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AssignmentDetailsPage(
+                        assignment:assignment,
+                      ),
+                    ),
+                  );
+                  setState(() {
+                    assignments = _loadAssignments();
+                  });
+                },
+              ),
+              AssignmentsDueSoonCard(
+                assigments: assignmentList,
+                onAssignmentTap: (assignment) async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:(_)=>AssignmentDetailsPage(
+                        assigment:assigment,
+                      ),
+                    ),
+                  );
+                  setState(() {
+                    assignments = _loadAssignments();
+                  });
+                },
+                onViewAll: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AssignmentOverviewPage(),
                     ),
                   );
                 },

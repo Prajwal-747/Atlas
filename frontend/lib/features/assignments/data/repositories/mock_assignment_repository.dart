@@ -9,6 +9,9 @@ class MockAssignmentRepository implements AssignmentRepository {
         .where((assignment) => assignment.subjectId == subjectId)
         .toList();
   }
+  Future<List<Assignment>> getAllAssignments() async {
+    return mockAssignments.toList();
+  }
 
   @override
   Future<void> addAssignment(Assignment assignment) async {

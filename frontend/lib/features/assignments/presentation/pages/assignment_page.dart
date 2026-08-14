@@ -79,7 +79,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
           }
           final assignmentList = assignmentSnapshot.data!;
           final activeAssignments = assignmentList.where((assignment) {
-            return assignment.status != AssignmentStatus.submitted &&
+            return assignment.status != AssignmentStatus.submitted ||
                 assignment.status != AssignmentStatus.graded;
           }).toList()..sort((a, b) => a.dueDate.compareTo((b.dueDate)));
           final completedAssignments = assignmentList.where((assignment) {
