@@ -74,6 +74,13 @@ class _TimetablePageState extends State<TimetablePage> {
                     .where((session) => session.subjectId == widget.subjectId)
                     .toList();
           final groupedSessions = groupSessionsByDay(filteredSessions);
+          for (final daySessions in groupedSessions.values) {
+            daySessions.sort((a,b) {
+              final aMinutes = a.startTime.hour * 60 + a.startTime.minute;
+              final bMinutes = b.startTime.hour * 60 + b.startTime.minute;
+              return aMinutes.compareTo(bMinutes);
+            });
+          }
           final orderedDays = groupedSessions.entries.toList()
             ..sort(
               (a, b) =>

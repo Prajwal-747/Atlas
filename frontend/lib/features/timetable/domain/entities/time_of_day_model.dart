@@ -4,7 +4,7 @@ class TimeOfDayModel {
 
   const TimeOfDayModel({required this.hour, required this.minute})
     : assert(hour >= 0 && hour < 24),
-      assert(minute >= 0 && hour < 60);
+      assert(minute >= 0 && minute < 60);
 
   String format24Hour() {
     final h = hour.toString().padLeft(2, '0');

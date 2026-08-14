@@ -4,7 +4,8 @@ import 'package:frontend/core/widgets/section_title.dart';
 
 class TodaysClassesCard extends StatelessWidget {
   final VoidCallback? onTap;
-  const TodaysClassesCard({super.key, this.onTap});
+  final List<ClassSession> sessions;
+  const TodaysClassesCard({super.key, required this.sessions, this.onTap});
 
   @override
   Widget build(BuildContext context) {
