@@ -19,7 +19,7 @@ class AppScaffold extends StatelessWidget {
       appBar: appBar,
       floatingActionButton: floatingActionButton,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: child,
         ),

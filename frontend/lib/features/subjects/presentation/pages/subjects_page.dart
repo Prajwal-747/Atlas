@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/widgets/app_scaffold.dart';
+import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_list.dart';
@@ -12,7 +12,7 @@ class SubjectsPage extends StatefulWidget {
 }
 
 class _SubjectsPageState extends State<SubjectsPage> {
-  final _repository = MockSubjectRepository();
+  final MockSubjectRepository _repository = MockSubjectRepository();
 
   List<Subject> _subjects = [];
 
@@ -23,12 +23,18 @@ class _SubjectsPageState extends State<SubjectsPage> {
   }
 
   Future<void> _loadSubjects() async {
-    _subjects = await _repository.getAllSubjects();
-    setState(() {});
+    final subjects = await _repository.getAllSubjects();
+    if (!mounted) return;
+    setState(() {
+      _subjects = subjects;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(child: SubjectList(subjects: _subjects));
+    return AppPageScaffold(
+      title: 'Subjects',
+      child: SubjectList(subjects: _subjects),
+    );
   }
 }

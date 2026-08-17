@@ -38,16 +38,16 @@ class _AddAssignmentPageState extends State<AddAssignmentPage> {
   }
 
   Future<void> _selectDueDate() async {
-    final PickedDate = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2026),
       lastDate: DateTime(2100),
     );
 
-    if (PickedDate != null) {
+    if (pickedDate != null) {
       setState(() {
-        selectedDueDate = PickedDate;
+        selectedDueDate = pickedDate;
       });
     }
   }

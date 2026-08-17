@@ -7,7 +7,6 @@ import 'package:frontend/features/attendance/domain/enums/attendance_status.dart
 import 'package:frontend/features/attendance/presentation/pages/attendance_page.dart';
 import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
-import 'package:frontend/features/subjects/presentation/widgets/subject_list.dart';
 
 class AttendanceOverviewPage extends StatefulWidget {
   const AttendanceOverviewPage({super.key});

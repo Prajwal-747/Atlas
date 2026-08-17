@@ -4,6 +4,7 @@ import 'package:frontend/features/timetable/data/repositories/mock_timetable_rep
 import 'package:frontend/features/timetable/domain/entities/class_session.dart';
 import 'package:frontend/features/timetable/presentation/widgets/session_tile.dart';
 import 'package:frontend/core/widgets/section_title.dart';
+import 'package:frontend/features/timetable/presentation/pages/add_timetable_session_page.dart';
 
 class TimetablePage extends StatefulWidget {
   final String? subjectId;
@@ -55,6 +56,17 @@ class _TimetablePageState extends State<TimetablePage> {
       title: widget.subjectName == null
           ? 'Timetable'
           : '${widget.subjectName} Schedule',
+      onFabPressed: () async {
+        final added = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(builder: (_) => const AddTimetableSessionPage()),
+        );
+        if (added == true) {
+          setState(() {
+            sessions = timetableRepository.getAllSessions();
+          });
+        }
+      },
       child: FutureBuilder<List<ClassSession>>(
         future: sessions,
         builder: (context, snapshot) {
@@ -75,7 +87,7 @@ class _TimetablePageState extends State<TimetablePage> {
                     .toList();
           final groupedSessions = groupSessionsByDay(filteredSessions);
           for (final daySessions in groupedSessions.values) {
-            daySessions.sort((a,b) {
+            daySessions.sort((a, b) {
               final aMinutes = a.startTime.hour * 60 + a.startTime.minute;
               final bMinutes = b.startTime.hour * 60 + b.startTime.minute;
               return aMinutes.compareTo(bMinutes);
