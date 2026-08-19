@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/core/network/api_client.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -43,9 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       debugPrint('Access token received: ${response.data['access']}');
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+      context.go('/app');
     } on DioException catch (e) {
       if (!mounted) return;
       final message = e.response?.data ?? 'Login Failed';
