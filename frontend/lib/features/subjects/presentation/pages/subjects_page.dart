@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
-import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
+import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_list.dart';
 
 class SubjectsPage extends StatefulWidget {
@@ -12,7 +12,7 @@ class SubjectsPage extends StatefulWidget {
 }
 
 class _SubjectsPageState extends State<SubjectsPage> {
-  final MockSubjectRepository _repository = MockSubjectRepository();
+  final ApiSubjectRepository _repository = ApiSubjectRepository();
 
   List<Subject> _subjects = [];
 

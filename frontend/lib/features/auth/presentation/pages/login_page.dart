@@ -41,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
       debugPrint('LOGIN SUCCESS');
-      debugPrint('Access token received: ${response.data['access']}');
+      final accessToken = response.data['access'] as String;
+      await apiClient.tokenStorage.saveAccessToken(accessToken);
       if (!mounted) return;
 
       context.go('/app');
