@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
-import 'package:frontend/features/timetable/data/repositories/mock_timetable_repository.dart';
+import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
 import 'package:frontend/features/timetable/domain/entities/class_session.dart';
 import 'package:frontend/features/timetable/presentation/widgets/session_tile.dart';
 import 'package:frontend/core/widgets/section_title.dart';
@@ -16,7 +16,7 @@ class TimetablePage extends StatefulWidget {
 }
 
 class _TimetablePageState extends State<TimetablePage> {
-  final MockTimetableRepository timetableRepository = MockTimetableRepository();
+  final ApiTimetableRepository timetableRepository = ApiTimetableRepository();
 
   late Future<List<ClassSession>> sessions;
 

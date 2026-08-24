@@ -4,8 +4,9 @@ import 'package:frontend/features/subjects/presentation/widgets/subject_card.dar
 
 class SubjectList extends StatelessWidget {
   final List<Subject> subjects;
+  final VoidCallback? onChanged;
 
-  const SubjectList({super.key, required this.subjects});
+  const SubjectList({super.key, required this.subjects, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class SubjectList extends StatelessWidget {
       itemCount: subjects.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        return SubjectCard(subject: subjects[index]);
+        return SubjectCard(subject: subjects[index], onChanged: onChanged);
       },
     );
   }

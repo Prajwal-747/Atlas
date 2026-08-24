@@ -44,7 +44,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
           await _loadSubjects();
         }
       },
-      child: SubjectList(subjects: _subjects),
+      child: SubjectList(subjects: _subjects, onChanged: _loadSubjects),
     );
   }
 }

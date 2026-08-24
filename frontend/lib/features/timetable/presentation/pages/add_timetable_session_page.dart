@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
-import 'package:frontend/features/timetable/data/repositories/mock_timetable_repository.dart';
+import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
+import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
+import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/timetable/domain/entities/class_session.dart';
 import 'package:frontend/features/timetable/domain/entities/day_of_week.dart';
 import 'package:frontend/features/timetable/domain/entities/time_of_day_model.dart';
@@ -14,17 +16,33 @@ class AddTimetableSessionPage extends StatefulWidget {
 }
 
 class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
-  final MockTimetableRepository timetableRepository = MockTimetableRepository();
-  final subjectIdController = TextEditingController();
-  final subjectNameController = TextEditingController();
+  final ApiTimetableRepository timetableRepository = ApiTimetableRepository();
+  final ApiSubjectRepository subjectRepository = ApiSubjectRepository();
+  List<Subject> subjects = [];
+  Subject? selectedSubject;
   DayOfWeek selectedDay = DayOfWeek.monday;
   TimeOfDay? selectedStartTime;
   TimeOfDay? selectedEndTime;
+
   @override
-  void dispose() {
-    subjectIdController.dispose();
-    subjectNameController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadSubjects();
+  }
+
+  Future<void> _loadSubjects() async {
+    try {
+      final loadedSubjects = await subjectRepository.getAllSubjects();
+      if (!mounted) return;
+      setState(() {
+        subjects = loadedSubjects;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to load subjects: $e')));
+    }
   }
 
   Future<void> _selectStartTime() async {
@@ -52,8 +70,7 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
   }
 
   Future<void> _saveSession() async {
-    if (subjectIdController.text.trim().isEmpty ||
-        subjectNameController.text.trim().isEmpty ||
+    if (selectedSubject == null ||
         selectedStartTime == null ||
         selectedEndTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -79,16 +96,23 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
       return;
     }
     final session = ClassSession(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      subjectId: subjectIdController.text.trim(),
-      subjectName: subjectNameController.text.trim(),
+      id: '',
+      subjectId: selectedSubject!.id,
+      subjectName: selectedSubject!.name,
       dayOfWeek: selectedDay,
       startTime: start,
       endTime: end,
     );
-    await timetableRepository.addSession(session);
-    if (!mounted) return;
-    Navigator.pop(context, true);
+    try {
+      await timetableRepository.addSession(session);
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to save class: $e')));
+    }
   }
 
   String _dayText(DayOfWeek day) {
@@ -124,20 +148,23 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
       child: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          TextField(
-            controller: subjectIdController,
+          DropdownButtonFormField<Subject>(
+            initialValue: selectedSubject,
             decoration: const InputDecoration(
-              labelText: 'Subject ID',
+              labelText: 'Subject',
               border: OutlineInputBorder(),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          TextField(
-            controller: subjectNameController,
-            decoration: const InputDecoration(
-              labelText: 'Subject Name',
-              border: OutlineInputBorder(),
-            ),
+            items: subjects.map((subject) {
+              return DropdownMenuItem(
+                value: subject,
+                child: Text('${subject.code} - ${subject.name}'),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedSubject = value;
+              });
+            },
           ),
           const SizedBox(height: AppSpacing.md),
           DropdownButtonFormField<DayOfWeek>(

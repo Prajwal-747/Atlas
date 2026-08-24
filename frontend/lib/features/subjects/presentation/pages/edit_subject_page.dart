@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
-import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/subjects/domain/entities/subject_type.dart';
+import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
 import 'package:frontend/features/subjects/presentation/widgets/subject_form.dart';
 
-class AddSubjectPage extends StatefulWidget {
-  const AddSubjectPage({super.key});
-
+class EditSubjectPage extends StatefulWidget {
+  final Subject subject;
+  const EditSubjectPage({super.key, required this.subject});
   @override
-  State<AddSubjectPage> createState() => _AddSubjectPageState();
+  State<EditSubjectPage> createState() => _EditSubjectPageState();
 }
 
-class _AddSubjectPageState extends State<AddSubjectPage> {
+class _EditSubjectPageState extends State<EditSubjectPage> {
   final ApiSubjectRepository subjectRepository = ApiSubjectRepository();
   bool isSaving = false;
-
-  Future<void> _saveSubject({
+  Future<void> _updateSubject({
     required String name,
     required String code,
     required int semester,
@@ -28,30 +27,29 @@ class _AddSubjectPageState extends State<AddSubjectPage> {
     setState(() {
       isSaving = true;
     });
-    final subject = Subject(
-      id: '',
+    final updatedSubject = Subject(
+      id: widget.subject.id,
       name: name,
-      color: const Color(0xFF6750A4),
+      color: Color(widget.subject.colorValue),
       code: code,
       semester: semester,
       credits: credits,
-      colorValue: 0xFF6750A4,
+      colorValue: widget.subject.colorValue,
       type: type,
-      archived: false,
-      createdAt: DateTime.now(),
+      archived: widget.subject.archived,
+      createdAt: widget.subject.createdAt,
       facultyName: facultyName,
       classroom: classroom,
     );
-
     try {
-      await subjectRepository.addSubject(subject);
+      await subjectRepository.updateSubject(updatedSubject);
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to save subject: $e')));
+      ).showSnackBar(SnackBar(content: Text('Failed to update Subject: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -63,12 +61,20 @@ class _AddSubjectPageState extends State<AddSubjectPage> {
 
   @override
   Widget build(BuildContext context) {
+    final subject = widget.subject;
     return AppPageScaffold(
-      title: 'Add Subject',
+      title: 'Edit Subject',
       child: SubjectForm(
-        buttonText: 'Save Subject',
+        initialName: subject.name,
+        initialCode: subject.code,
+        initialSemester: subject.semester,
+        initialCredits: subject.credits,
+        initialFacultyName: subject.facultyName,
+        initialClassroom: subject.classroom,
+        initialType: subject.type,
+        buttonText: 'Save Changes',
         isSaving: isSaving,
-        onSubmit: _saveSubject,
+        onSubmit: _updateSubject,
       ),
     );
   }
