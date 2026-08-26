@@ -40,6 +40,12 @@ class _TimetablePageState extends State<TimetablePage> {
     sessions = timetableRepository.getAllSessions();
   }
 
+  void _loadSessions() {
+    setState(() {
+      sessions = timetableRepository.getAllSessions();
+    });
+  }
+
   static const dayOrder = [
     'monday',
     'tuesday',
@@ -62,9 +68,7 @@ class _TimetablePageState extends State<TimetablePage> {
           MaterialPageRoute(builder: (_) => const AddTimetableSessionPage()),
         );
         if (added == true) {
-          setState(() {
-            sessions = timetableRepository.getAllSessions();
-          });
+          _loadSessions();
         }
       },
       child: FutureBuilder<List<ClassSession>>(
@@ -115,7 +119,8 @@ class _TimetablePageState extends State<TimetablePage> {
                   ),
                   const SizedBox(height: 4),
                   ...entry.value.map(
-                    (session) => SessionTile(session: session),
+                    (session) =>
+                        SessionTile(session: session, onChanged: _loadSessions),
                   ),
                   const SizedBox(height: 12),
                 ],

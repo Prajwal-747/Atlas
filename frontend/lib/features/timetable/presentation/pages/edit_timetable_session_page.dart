@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
-import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
+import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
 import 'package:frontend/features/timetable/domain/entities/class_session.dart';
 import 'package:frontend/features/timetable/domain/entities/day_of_week.dart';
 import 'package:frontend/features/timetable/domain/entities/time_of_day_model.dart';
 import 'package:frontend/features/timetable/presentation/widgets/timetable_session_form.dart';
 
-class AddTimetableSessionPage extends StatefulWidget {
-  const AddTimetableSessionPage({super.key});
+class EditTimetableSessionPage extends StatefulWidget {
+  final ClassSession session;
+  const EditTimetableSessionPage({super.key, required this.session});
+
   @override
-  State<AddTimetableSessionPage> createState() =>
-      _AddTimetableSessionPageState();
+  State<EditTimetableSessionPage> createState() =>
+      _EditTimetableSessionPageState();
 }
 
-class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
+class _EditTimetableSessionPageState extends State<EditTimetableSessionPage> {
   final ApiTimetableRepository timetableRepository = ApiTimetableRepository();
   bool isSaving = false;
-
-  Future<void> _saveSession({
+  Future<void> _updateSession({
     required Subject subject,
     required DayOfWeek day,
     required TimeOfDay startTime,
@@ -27,8 +28,8 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
     setState(() {
       isSaving = true;
     });
-    final session = ClassSession(
-      id: '',
+    final updatedSession = ClassSession(
+      id: widget.session.id,
       subjectId: subject.id,
       subjectName: subject.name,
       dayOfWeek: day,
@@ -36,14 +37,14 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
       endTime: TimeOfDayModel(hour: endTime.hour, minute: endTime.minute),
     );
     try {
-      await timetableRepository.addSession(session);
+      await timetableRepository.updateSession(updatedSession);
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to save class: $e')));
+      ).showSnackBar(SnackBar(content: Text('Failed to update class: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -56,11 +57,21 @@ class _AddTimetableSessionPageState extends State<AddTimetableSessionPage> {
   @override
   Widget build(BuildContext context) {
     return AppPageScaffold(
-      title: 'Add Class',
+      title: 'Edit Class',
       child: TimetableSessionForm(
-        buttonText: 'Save Class',
+        initialSubjectId: widget.session.subjectId,
+        initialDay: widget.session.dayOfWeek,
+        initialStartTime: TimeOfDay(
+          hour: widget.session.startTime.hour,
+          minute: widget.session.startTime.minute,
+        ),
+        initialEndTime: TimeOfDay(
+          hour: widget.session.endTime.hour,
+          minute: widget.session.endTime.minute,
+        ),
+        buttonText: 'Save Changes',
         isSaving: isSaving,
-        onSubmit: _saveSession,
+        onSubmit: _updateSession,
       ),
     );
   }

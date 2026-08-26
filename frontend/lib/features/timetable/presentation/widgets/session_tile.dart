@@ -1,15 +1,57 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/class_session.dart';
+import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
+import 'package:frontend/features/timetable/domain/entities/class_session.dart';
+import 'package:frontend/features/timetable/presentation/pages/edit_timetable_session_page.dart';
 
 class SessionTile extends StatelessWidget {
   final ClassSession session;
   final VoidCallback? onTap;
+  final VoidCallback? onChanged;
 
-  const SessionTile({super.key, required this.session, this.onTap});
+  const SessionTile({
+    super.key,
+    required this.session,
+    this.onTap,
+    this.onChanged,
+  });
 
-  String capitalize(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
+  Future<void> _deleteSession(BuildContext context) async {
+    final confirmed = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Class?'),
+          content: Text(
+            'Are you sure you want to delete ${session.subjectName}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true) return;
+
+    try {
+      await ApiTimetableRepository().deleteSession(session.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Class deleted')));
+      onChanged?.call();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to delete class: $e')));
+    }
   }
 
   @override
@@ -31,7 +73,31 @@ class SessionTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const Spacer(),
-                  const Icon(Icons.chevron_right),
+                  PopupMenuButton<String>(
+                    onSelected: (value) async {
+                      if (value == 'edit') {
+                        final updated = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                EditTimetableSessionPage(session: session),
+                          ),
+                        );
+                        if (!context.mounted) return;
+
+                        if (updated == true) {
+                          onChanged?.call();
+                        }
+                      }
+                      if (value == 'delete') {
+                        await _deleteSession(context);
+                      }
+                    },
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'edit', child: Text('Edit')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    ],
+                  ),
                 ],
               ),
 

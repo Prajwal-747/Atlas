@@ -27,7 +27,7 @@ class ClassSessionDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes=[IsAuthenticated]
     def get_queryset(self):
         return ClassSession.objects.filter(
-            subject__user=self.req.user
+            subject__user=self.request.user
         )
         
 class TodayClassSessionView(generics.ListAPIView):
