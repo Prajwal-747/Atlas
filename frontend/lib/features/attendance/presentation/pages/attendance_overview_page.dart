@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/core/widgets/section_title.dart';
-import 'package:frontend/features/attendance/data/repositories/mock_attendance_repository.dart';
+import 'package:frontend/features/attendance/data/repositories/api_attendance_repository.dart';
 import 'package:frontend/features/attendance/domain/entities/attendance_record.dart';
 import 'package:frontend/features/attendance/domain/enums/attendance_status.dart';
 import 'package:frontend/features/attendance/presentation/pages/attendance_page.dart';
-import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
+import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 
 class AttendanceOverviewPage extends StatefulWidget {
@@ -16,9 +16,9 @@ class AttendanceOverviewPage extends StatefulWidget {
 }
 
 class _AttendanceOverviewPageState extends State<AttendanceOverviewPage> {
-  final MockSubjectRepository subjectRepository = MockSubjectRepository();
-  final MockAttendanceRepository attendanceRepository =
-      MockAttendanceRepository();
+  final ApiSubjectRepository subjectRepository = ApiSubjectRepository();
+  final ApiAttendanceRepository attendanceRepository =
+      ApiAttendanceRepository();
   late Future<List<Subject>> subjects;
 
   @override
@@ -53,8 +53,8 @@ class _AttendanceOverviewPageState extends State<AttendanceOverviewPage> {
                 (subject) => _AttendanceSubjectCard(
                   subject: subject,
                   attendanceRepository: attendanceRepository,
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push<bool>(
                       context,
                       MaterialPageRoute(
                         builder: (_) => AttendancePage(
@@ -63,6 +63,10 @@ class _AttendanceOverviewPageState extends State<AttendanceOverviewPage> {
                         ),
                       ),
                     );
+                    if (!mounted) return;
+                    setState(() {
+                      subjects = subjectRepository.getAllSubjects();
+                    });
                   },
                 ),
               ),
@@ -76,7 +80,7 @@ class _AttendanceOverviewPageState extends State<AttendanceOverviewPage> {
 
 class _AttendanceSubjectCard extends StatelessWidget {
   final Subject subject;
-  final MockAttendanceRepository attendanceRepository;
+  final ApiAttendanceRepository attendanceRepository;
   final VoidCallback onTap;
 
   const _AttendanceSubjectCard({

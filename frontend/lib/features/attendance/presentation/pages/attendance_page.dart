@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/core/widgets/section_title.dart';
 
-import 'package:frontend/features/attendance/data/repositories/mock_attendance_repository.dart';
+import 'package:frontend/features/attendance/data/repositories/api_attendance_repository.dart';
 import 'package:frontend/features/attendance/domain/entities/attendance_record.dart';
 import 'package:frontend/features/attendance/domain/enums/attendance_status.dart';
 import 'package:frontend/features/attendance/presentation/widgets/attendance_action_card.dart';
@@ -24,7 +24,7 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  final MockAttendanceRepository repository = MockAttendanceRepository();
+  final ApiAttendanceRepository repository = ApiAttendanceRepository();
 
   late Future<List<AttendanceRecord>> attendanceRecords;
 

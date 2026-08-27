@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_scaffold.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/features/assignments/presentation/pages/assignment_overview_page.dart';
-import 'package:frontend/features/attendance/data/repositories/mock_attendance_repository.dart';
+import 'package:frontend/features/attendance/data/repositories/api_attendance_repository.dart';
 import 'package:frontend/features/attendance/domain/entities/attendance_record.dart';
 import 'package:frontend/features/attendance/domain/enums/attendance_status.dart';
 import 'package:frontend/features/attendance/presentation/pages/attendance_overview_page.dart';
@@ -26,8 +26,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final MockAttendanceRepository attendanceRepository =
-      MockAttendanceRepository();
+  final ApiAttendanceRepository attendanceRepository =
+      ApiAttendanceRepository();
   late Future<List<AttendanceRecord>> attendanceRecords;
   final MockAssignmentRepository assignmentRepository =
       MockAssignmentRepository();
