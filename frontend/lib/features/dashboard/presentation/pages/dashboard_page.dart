@@ -53,10 +53,18 @@ class _DashboardPageState extends State<DashboardPage> {
     return timetableRepository.getSessionsForDay(day);
   }
 
+  void _reloadDashboard() {
+    setState(() {
+      attendanceRecords = attendanceRepository.getAllAttendance();
+      assignments = _loadAssignments();
+      todaysSessions = _loadTodaysSessions();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      child: FutureBuilder(
+      child: FutureBuilder<List<dynamic>>(
         future: Future.wait([attendanceRecords, assignments, todaysSessions]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -65,10 +73,9 @@ class _DashboardPageState extends State<DashboardPage> {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
-          final attendance = snapshot.data![0] as List<AttendanceRecord>;
+          final records = snapshot.data![0] as List<AttendanceRecord>;
           final assignmentList = snapshot.data![1] as List<Assignment>;
           final sessionList = snapshot.data![2] as List<ClassSession>;
-          final records = attendance;
           final presentCount = records
               .where((record) => record.status == AttendanceStatus.present)
               .length;
@@ -95,9 +102,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   );
                   if (!mounted) return;
-                  setState(() {
-                    attendanceRecords = attendanceRepository.getAllAttendance();
-                  });
+                  _reloadDashboard();
                 },
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -109,9 +114,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     MaterialPageRoute(builder: (_) => const TimetablePage()),
                   );
                   if (!mounted) return;
-                  setState(() {
-                    todaysSessions = _loadTodaysSessions();
-                  });
+                  _reloadDashboard();
                 },
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -125,9 +128,8 @@ class _DashboardPageState extends State<DashboardPage> {
                           AssignmentDetailsPage(assignment: assignment),
                     ),
                   );
-                  setState(() {
-                    assignments = _loadAssignments();
-                  });
+                  if (!mounted) return;
+                  _reloadDashboard();
                 },
                 onViewAll: () async {
                   await Navigator.push(
@@ -137,9 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   );
                   if (!mounted) return;
-                  setState(() {
-                    assignments = _loadAssignments();
-                  });
+                  _reloadDashboard();
                 },
               ),
             ],
