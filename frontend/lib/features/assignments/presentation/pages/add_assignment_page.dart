@@ -3,7 +3,7 @@ import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/features/assignments/domain/enums/assignment_status.dart';
 import 'package:frontend/features/assignments/domain/enums/effort_required.dart';
-import 'package:frontend/features/assignments/data/repositories/mock_assignment_repository.dart';
+import 'package:frontend/features/assignments/data/repositories/api_assignment_repository.dart';
 import 'package:frontend/features/assignments/domain/entities/assignment.dart';
 
 class AddAssignmentPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class AddAssignmentPage extends StatefulWidget {
 class _AddAssignmentPageState extends State<AddAssignmentPage> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  final MockAssignmentRepository repository = MockAssignmentRepository();
+  final ApiAssignmentRepository repository = ApiAssignmentRepository();
 
   DateTime? selectedDueDate;
 
@@ -195,7 +195,7 @@ class _AddAssignmentPageState extends State<AddAssignmentPage> {
       return;
     }
     final assignment = Assignment(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '',
       subjectId: widget.subjectId,
       description: descriptionController.text.trim(),
       dueDate: selectedDueDate!,

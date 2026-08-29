@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
-import 'package:frontend/features/assignments/data/repositories/mock_assignment_repository.dart';
+import 'package:frontend/features/assignments/data/repositories/api_assignment_repository.dart';
 import 'package:frontend/features/assignments/domain/entities/assignment.dart';
 import 'package:frontend/features/assignments/domain/enums/assignment_status.dart';
 import 'package:frontend/features/assignments/domain/enums/effort_required.dart';
@@ -14,7 +14,7 @@ class AssignmentDetailsPage extends StatefulWidget {
 }
 
 class _AssignmentDetailsPageState extends State<AssignmentDetailsPage> {
-  final MockAssignmentRepository repository = MockAssignmentRepository();
+  final ApiAssignmentRepository repository = ApiAssignmentRepository();
   late TextEditingController titleController;
   late TextEditingController descriptionController;
   late DateTime selectedDueDate;

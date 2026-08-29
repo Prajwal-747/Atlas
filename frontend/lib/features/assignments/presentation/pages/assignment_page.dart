@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/app_page_scaffold.dart';
 import 'package:frontend/core/widgets/section_title.dart';
-import 'package:frontend/features/assignments/data/repositories/mock_assignment_repository.dart';
+import 'package:frontend/features/assignments/data/repositories/api_assignment_repository.dart';
 import 'package:frontend/features/assignments/domain/entities/assignment.dart';
 import 'package:frontend/features/assignments/domain/enums/assignment_status.dart';
 import 'package:frontend/features/assignments/presentation/pages/assignment_details_page.dart';
 import 'package:frontend/features/assignments/presentation/widgets/assignment_card.dart';
-import 'package:frontend/features/subjects/data/repositories/mock_subject_repository.dart';
+import 'package:frontend/features/subjects/data/repositories/api_subject_repository.dart';
 import 'package:frontend/features/subjects/domain/entities/subject.dart';
 import 'package:frontend/features/assignments/presentation/pages/add_assignment_page.dart';
 
@@ -25,10 +25,10 @@ class AssignmentPage extends StatefulWidget {
 }
 
 class _AssignmentPageState extends State<AssignmentPage> {
-  final MockAssignmentRepository assignmentRepository =
-      MockAssignmentRepository();
+  final ApiAssignmentRepository assignmentRepository =
+      ApiAssignmentRepository();
 
-  final MockSubjectRepository subjectRepository = MockSubjectRepository();
+  final ApiSubjectRepository subjectRepository = ApiSubjectRepository();
   late Future<List<Assignment>> assignments;
   late Future<Subject?> subject;
 
@@ -79,7 +79,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
           }
           final assignmentList = assignmentSnapshot.data!;
           final activeAssignments = assignmentList.where((assignment) {
-            return assignment.status != AssignmentStatus.submitted ||
+            return assignment.status != AssignmentStatus.submitted &&
                 assignment.status != AssignmentStatus.graded;
           }).toList()..sort((a, b) => a.dueDate.compareTo((b.dueDate)));
           final completedAssignments = assignmentList.where((assignment) {

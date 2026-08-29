@@ -10,11 +10,11 @@ import 'package:frontend/features/dashboard/presentation/widgets/dashboard_heade
 import 'package:frontend/features/dashboard/presentation/widgets/todays_classes_card.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/attendance_summary_card.dart';
 import 'package:frontend/features/timetable/presentation/pages/timetable_page.dart';
-import 'package:frontend/features/assignments/data/repositories/mock_assignment_repository.dart';
+import 'package:frontend/features/assignments/data/repositories/api_assignment_repository.dart';
 import 'package:frontend/features/dashboard/presentation/widgets/assignments_due_soon_card.dart';
 import 'package:frontend/features/assignments/domain/entities/assignment.dart';
 import 'package:frontend/features/assignments/presentation/pages/assignment_details_page.dart';
-import 'package:frontend/features/timetable/data/repositories/mock_timetable_repository.dart';
+import 'package:frontend/features/timetable/data/repositories/api_timetable_repository.dart';
 import 'package:frontend/features/timetable/domain/entities/class_session.dart';
 import 'package:frontend/features/timetable/domain/entities/day_of_week.dart';
 
@@ -29,10 +29,10 @@ class _DashboardPageState extends State<DashboardPage> {
   final ApiAttendanceRepository attendanceRepository =
       ApiAttendanceRepository();
   late Future<List<AttendanceRecord>> attendanceRecords;
-  final MockAssignmentRepository assignmentRepository =
-      MockAssignmentRepository();
+  final ApiAssignmentRepository assignmentRepository =
+      ApiAssignmentRepository();
   late Future<List<Assignment>> assignments;
-  final MockTimetableRepository timetableRepository = MockTimetableRepository();
+  final ApiTimetableRepository timetableRepository = ApiTimetableRepository();
   late Future<List<ClassSession>> todaysSessions;
 
   @override
@@ -87,23 +87,31 @@ class _DashboardPageState extends State<DashboardPage> {
                 presentCount: presentCount,
                 absentCount: absentCount,
                 lateCount: lateCount,
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const AttendanceOverviewPage(),
                     ),
                   );
+                  if (!mounted) return;
+                  setState(() {
+                    attendanceRecords = attendanceRepository.getAllAttendance();
+                  });
                 },
               ),
               const SizedBox(height: AppSpacing.lg),
               TodaysClassesCard(
                 sessions: sessionList,
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const TimetablePage()),
                   );
+                  if (!mounted) return;
+                  setState(() {
+                    todaysSessions = _loadTodaysSessions();
+                  });
                 },
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -121,13 +129,17 @@ class _DashboardPageState extends State<DashboardPage> {
                     assignments = _loadAssignments();
                   });
                 },
-                onViewAll: () {
-                  Navigator.push(
+                onViewAll: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const AssignmentOverviewPage(),
                     ),
                   );
+                  if (!mounted) return;
+                  setState(() {
+                    assignments = _loadAssignments();
+                  });
                 },
               ),
             ],
