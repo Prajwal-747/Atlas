@@ -1,63 +1,90 @@
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:frontend/core/network/api_client.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final loginController = TextEditingController();
+class _RegisterPageState extends State<RegisterPage> {
+  final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final ApiClient apiClient = ApiClient();
   bool isLoading = false;
+
   @override
   void dispose() {
-    loginController.dispose();
+    emailController.dispose();
+    usernameController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _login() async {
-    if (loginController.text.trim().isEmpty ||
-        passwordController.text.isEmpty) {
+  Future<void> _register() async {
+    final email = emailController.text.trim();
+    final username = usernameController.text.trim();
+    final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (email.isEmpty ||
+        username.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields.')),
+      );
+      return;
+    }
+    if (password.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter your username/email and password.'),
+          content: Text('Password must be at least 8 characters.'),
         ),
       );
+      return;
+    }
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match.')));
       return;
     }
     setState(() {
       isLoading = true;
     });
     try {
-      final response = await apiClient.dio.post(
-        '/auth/token/',
-        data: {
-          'email': loginController.text.trim(),
-          'password': passwordController.text,
-        },
-      );
-      final accessToken = response.data['access'] as String;
-      final refreshToken = response.data['refresh'] as String;
-
-      await apiClient.tokenStorage.saveTokens(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+      await apiClient.dio.post(
+        '/auth/register/',
+        data: {'email': email, 'username': username, 'password': password},
       );
       if (!mounted) return;
-
-      context.go('/app');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account created successfully.')),
+      );
+      context.go('/');
     } on DioException catch (e) {
       if (!mounted) return;
-      final message = e.response?.data ?? 'Login Failed';
+      final data = e.response?.data;
+      String message = 'Registration failed';
+
+      if (data is Map<String, dynamic>) {
+        if (data['email'] is List) {
+          message = data['email'][0].toString();
+        } else if (data['username'] is List) {
+          message = data['username'][0].toString();
+        } else if (data['password'] is List) {
+          message = data['password'][0].toString();
+        }
+      }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Login Failed: $message')));
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) {
         setState(() {
@@ -78,7 +105,6 @@ class _LoginPageState extends State<LoginPage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: 72,
@@ -95,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Welcome to Atlas',
+                    'Create your Atlas account',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -103,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your academic companion',
+                    'Start managing your academics',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -116,11 +142,22 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           TextField(
-                            controller: loginController,
+                            controller: usernameController,
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
-                              labelText: 'Username or Email',
+                              labelText: 'Username',
+                              prefixIcon: Icon(Icons.email_outlined),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: emailController,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
                               prefixIcon: Icon(Icons.email_outlined),
                               border: OutlineInputBorder(),
                             ),
@@ -129,14 +166,25 @@ class _LoginPageState extends State<LoginPage> {
                           TextField(
                             controller: passwordController,
                             obscureText: true,
+                            textInputAction: TextInputAction.next,
+                            decoration: const InputDecoration(
+                              labelText: 'Password',
+                              prefixIcon: Icon(Icons.lock_outline),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: confirmPasswordController,
+                            obscureText: true,
                             textInputAction: TextInputAction.done,
                             onSubmitted: (_) {
                               if (!isLoading) {
-                                _login();
+                                _register();
                               }
                             },
                             decoration: const InputDecoration(
-                              labelText: 'Password',
+                              labelText: 'Confirm Password',
                               prefixIcon: Icon(Icons.lock_outline),
                               border: OutlineInputBorder(),
                             ),
@@ -145,28 +193,24 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(
                             width: double.infinity,
                             child: FilledButton(
-                              onPressed: isLoading ? null : _login,
+                              onPressed: isLoading ? null : _register,
                               child: isLoading
                                   ? const SizedBox(
                                       height: 22,
                                       width: 22,
                                       child: CircularProgressIndicator(),
                                     )
-                                  : const Text('Login'),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: isLoading
-                                ? null
-                                : () => context.go('/register'),
-                            child: const Text(
-                              'Don\'t have an account? Create one',
+                                  : const Text('Create Account'),
                             ),
                           ),
                         ],
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: isLoading ? null : () => context.go('/'),
+                    child: const Text('Already have an account? Log in'),
                   ),
                 ],
               ),

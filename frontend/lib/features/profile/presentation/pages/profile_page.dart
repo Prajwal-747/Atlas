@@ -40,56 +40,64 @@ class _ProfilePageState extends State<ProfilePage> {
       child: FutureBuilder<UserProfile>(
         future: profile,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: Text('Unable to load profile'));
-          }
-          final user = snapshot.data!;
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const SizedBox(height: 24),
-              Center(
-                child: CircleAvatar(
-                  radius: 42,
+              if (snapshot.connectionState == ConnectionState.waiting) ...[
+                const SizedBox(height: 80),
+                const Center(child: CircularProgressIndicator()),
+              ] else if (snapshot.hasError) ...[
+                const SizedBox(height: 40),
+                const Center(child: Text('Unable to load profile')),
+                const SizedBox(height: 16),
+                Center(
                   child: Text(
-                    user.username.isNotEmpty
-                        ? user.username[0].toUpperCase()
-                        : '?',
-                    style: const TextStyle(fontSize: 32),
+                    'Your session may have expired.',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  user.username,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.person_outline),
-                      title: const Text('Username'),
-                      subtitle: Text(user.username),
+              ] else if (!snapshot.hasData) ...[
+                const SizedBox(height: 40),
+                const Center(child: Text('Unable to load profile')),
+              ] else ...[
+                const SizedBox(height: 24),
+                Center(
+                  child: CircleAvatar(
+                    radius: 42,
+                    child: Text(
+                      snapshot.data!.username.isNotEmpty
+                          ? snapshot.data!.username[0].toUpperCase()
+                          : '?',
+                      style: const TextStyle(fontSize: 32),
                     ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.email_outlined),
-                      title: const Text('Email'),
-                      subtitle: Text(user.email),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    snapshot.data!.username,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.person_outline),
+                        title: const Text('Username'),
+                        subtitle: Text(snapshot.data!.username),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.email_outlined),
+                        title: const Text('Email'),
+                        subtitle: Text(snapshot.data!.email),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               OutlinedButton.icon(
                 onPressed: isLoggingOut ? null : _logout,
