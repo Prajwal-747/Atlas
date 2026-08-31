@@ -22,6 +22,38 @@ class ApiClient {
           }
           handler.next(options);
         },
+        onError: (error, handler) async {
+          final path = error.requestOptions.path;
+          if (error.response?.statusCode != 401 ||
+              path == '/auth/token/' ||
+              path == '/auth/token/refresh/') {
+            handler.next(error);
+            return;
+          }
+          final refreshToken = await this.tokenStorage.getRefreshToken();
+          if (refreshToken == null || refreshToken.isEmpty) {
+            handler.next(error);
+            return;
+          }
+          try {
+            final response = await dio.post(
+              '/auth/token/refresh/',
+              data: {'refresh': refreshToken},
+            );
+            final newAccessToken = response.data['access'] as String;
+            await this.tokenStorage.saveTokens(
+              accessToken: newAccessToken,
+              refreshToken: refreshToken,
+            );
+            final request = error.requestOptions;
+            request.headers['Authorization'] = 'Bearer $newAccessToken';
+            final retryResponse = await dio.fetch(request);
+            handler.resolve(retryResponse);
+          } on DioException {
+            await this.tokenStorage.clear();
+            handler.next(error);
+          }
+        },
       ),
     );
   }

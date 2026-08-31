@@ -14,4 +14,14 @@ class AppTheme {
       textTheme: AppTextTheme.textTheme,
     );
   }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      fontFamily: 'Inter',
+      useMaterial3: true,
+      colorSchemeSeed: AppColors.primary,
+      brightness: Brightness.dark,
+      textTheme: AppTextTheme.textTheme,
+    );
+  }
 }

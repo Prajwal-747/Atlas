@@ -11,6 +11,8 @@ class AtlasApp extends StatelessWidget {
       title: 'Atlas',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       routerConfig: appRouter,
     );
   }
