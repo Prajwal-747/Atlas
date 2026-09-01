@@ -4,7 +4,11 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
+from django.http import JsonResponse
 from users.serializers import LoginSerializer
+
+def health_check(request):
+    return JsonResponse({'status': 'ok'})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,4 +19,5 @@ urlpatterns = [
     path('api/timetable/', include('timetable.urls')),
     path('api/attendance/', include('attendance.urls')),
     path('api/assignments/', include('assignments.urls')),
+    path('health/', health_check)
 ]
