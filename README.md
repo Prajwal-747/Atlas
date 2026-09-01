@@ -1,9 +1,34 @@
 # Atlas
 
-This project is meant to be a complete student companion productivity app
+Atlas is a student companion and productivity app designed to help students manage their academic life in one place.
 
-Right now the project is still under development and didnot completely finish, i have added basic functions which i wanted and everything is completely functional as of now
+The project is currently under development. I have implemented the basic functions I wanted for the current version, and the features currently included are functional.
 
-to use the app u can go to https://atlas-web-wba5.onrender.com/ and create an account followed by using the credentials to login to ur account.
-after tht move onto subject panel in bottom and add ur subjects
-after tht u can go back to main page and click on timetable and ur timetable and so on
+## Using Atlas
+
+You can access the web version here:
+
+https://atlas-web-wba5.onrender.com/
+
+To get started:
+
+1. Open the Atlas web app.
+2. Create an account using the registration page.
+3. Log in using your credentials.
+4. Go to the **Subjects** panel at the bottom and add your subjects.
+5. Return to the main page.
+6. Open **Timetable** to add and manage your timetable.
+7. Use the other sections to manage your attendance and assignments.
+
+## Project Status
+
+Atlas is still a work in progress. The current version focuses on the basic functionality required for a student companion app, with additional features planned for future development.
+
+
+## Web App
+
+The current deployed version can be accessed here:
+
+https://atlas-web-wba5.onrender.com/
+
+Create an account and start adding your academic information to begin using Atlas.
