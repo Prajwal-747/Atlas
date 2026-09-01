@@ -23,3 +23,19 @@ class MeView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+    def patch(self,request):
+        serializer = UserSerializer(
+            request.user,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid():
+            user=serializer.save()
+            return Response(
+                UserSerializer(user).data,
+                status=200
+            )
+        return Response(
+            serializer.errors,
+            status=400
+        )
