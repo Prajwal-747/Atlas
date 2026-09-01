@@ -69,6 +69,8 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       context.go('/');
     } on DioException catch (e) {
+      debugPrint('REGISTER STATUS: ${e.response?.statusCode}');
+      debugPrint('REGISTER RESPONSE: ${e.response?.data}');
       if (!mounted) return;
       final data = e.response?.data;
       String message = 'Registration failed';
